@@ -15,6 +15,7 @@ class BingoBoard
         void AddRow(std::array<int, 5>&& row, const int pos);
         bool DrawNumber(const int num);
         int GetSum() {return win_sum_;}
+        int GetWin() {return is_winner_;}
         void PrintBoard() const;
     private:
         void ComputeSumUnmarked();
@@ -126,11 +127,15 @@ std::vector<int> LineToIntVec(const std::string& line, const char delim){
 
 }
 
-int RunBingoGame(const std::string& file_name){
+int RunBingoGame(const std::string& file_name, bool first_win=true){
     std::ifstream file(file_name, std::ios::in);
 
     std::vector<int> nums_to_play;
     std::vector<BingoBoard> boards_in_game;
+    BingoBoard last_win_board;
+    int last_win_num;
+    // bool any_board_won = false;
+    // bool all_boards_won = false;
 
     if(file.is_open()){
         std::string line;
@@ -167,21 +172,40 @@ int RunBingoGame(const std::string& file_name){
         }
 
         for(const auto& num: nums_to_play){
-            for(auto& board : boards_in_game){
+            for(auto& board: boards_in_game){
+                if(board.GetWin()){
+                    // If the board has won skip it
+                    // I should really remove it, but lazy..
+                    continue;
+                }
                 if(board.DrawNumber(num)){
-                    std::cout << "Winning Num is " << num << std::endl;
-                    board.PrintBoard();
-                    return board.GetSum() * num;
+                    if(first_win){
+                        std::cout << "Winning Num is " << num << std::endl;
+                        board.PrintBoard();
+                        return board.GetSum() * num;
+                    }
+                    else{
+                        last_win_board = board;
+                        last_win_num = num;
+                    }
                 }
             }
         }
     }
-    return 0;
+    if(first_win){
+        return 0;
+    }
+    else{
+        std::cout << "Winning Num is " << last_win_num << std::endl;
+        last_win_board.PrintBoard();
+        return last_win_board.GetSum() * last_win_num;
+    }
 }
 
 int main()
 {
     std::cout << "Hello World" << std::endl;
     std::cout << "Result: " << RunBingoGame("input.txt") << std::endl;
+    std::cout << RunBingoGame("input.txt", false) << std::endl;
     return 0;
 }
