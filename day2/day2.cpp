@@ -16,12 +16,10 @@ int compute_position(const std::string& file_name)
         while( std::getline(file, line) )
         {
             // Commands are format 'forward 5'
-            
             // Find the empty character
             std::string::size_type n = line.find(" ");
             if(n == std::string::npos){
                 // This should never happen, but just in case
-                std::cout << "Incorrect formatted command" << std::endl;
                 continue;
             }
             else{
