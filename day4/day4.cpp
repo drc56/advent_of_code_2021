@@ -21,6 +21,7 @@ class BingoBoard
         void ComputeSumUnmarked();
         bool HasWon(const int row, const int col);
 
+        // probably should just make this an array of tuples, but oh well
         std::array<std::array<int, kBingoSize>, kBingoSize> num_board_;
         std::array<std::array<bool, kBingoSize>, kBingoSize> bool_board_;
         bool is_winner_ = false;
